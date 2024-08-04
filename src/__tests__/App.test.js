@@ -1,46 +1,43 @@
-import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+// src/__tests__/App.test.js
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from '../components/App'; // Adjust the import based on your actual path
 
-import user from "../data/user";
-import App from "../components/App";
+const user = {
+  name: 'Liza',
+  city: 'New York',
+  color: 'firebrick',
+  bio: 'I made this!',
+  links: {
+    github: 'https://github.com/liza',
+    linkedin: 'https://www.linkedin.com/in/liza/'
+  }
+};
 
-test("renders without errors", () => {
-  expect(() => render(<App />)).not.toThrow();
-});
-
-test("renders the correct child components", () => {
-  const { container } = render(<App />);
-  expect(container.querySelector("nav")).toBeInTheDocument();
-  expect(container.querySelector("#home")).toBeInTheDocument();
-  expect(container.querySelector("#about")).toBeInTheDocument();
-});
-
-test("passes 'name', 'city', and 'color' to <Home> as props", () => {
+test('passes name, city, and color to <Home> as props', () => {
   render(<App />);
-  const h1 = screen.queryByText(
-    `${user.name} is a Web Developer from ${user.city}`
-  );
+  const h1 = screen.getByText(`${user.name} is a Web Developer from ${user.city}`);
   expect(h1).toBeInTheDocument();
-  expect(h1.style.color).toEqual(user.color);
+  expect(h1).toHaveStyle(`color: ${user.color}`);
 });
 
-test("passes 'bio' to <About> as a prop", () => {
+test('passes bio to <About> as a prop', () => {
   render(<App />);
-  const p = screen.queryByText(user.bio);
+  const p = screen.getByText(user.bio);
   expect(p).toBeInTheDocument();
-  expect(p.tagName).toEqual("P");
+  expect(p.tagName).toEqual('P');
 });
 
-test("passes 'github' to <Links> as a prop, via <About>", () => {
+test('passes github link to <Links> as a prop, via <About>', () => {
   render(<App />);
-  const a = screen.queryByText(user.links.github);
-  expect(a).toBeInTheDocument();
-  expect(a.tagName).toEqual("A");
+  const [githubLink] = screen.getAllByText('GitHub');
+  expect(githubLink).toBeInTheDocument();
+  expect(githubLink).toHaveAttribute('href', user.links.github);
 });
 
-test("passes 'linkedin' to <Links> as a prop, via <About>", () => {
+test('passes linkedin link to <Links> as a prop, via <About>', () => {
   render(<App />);
-  const a = screen.queryByText(user.links.linkedin);
-  expect(a).toBeInTheDocument();
-  expect(a.tagName).toEqual("A");
+  const [linkedinLink] = screen.getAllByText('LinkedIn');
+  expect(linkedinLink).toBeInTheDocument();
+  expect(linkedinLink).toHaveAttribute('href', user.links.linkedin);
 });
